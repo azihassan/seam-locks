@@ -67,6 +67,28 @@ export const handlers = [
       );
     }
   ),
+
+  rest.post(
+    `https://devicecloud.example.com/locks/:id/unlock`,
+    (req, res, ctx) => {
+      const lock = getLockByIdOrThrow404(
+        req.params.id as string,
+        req,
+        res,
+        ctx
+      );
+      if (lock === undefined) {
+        return;
+      }
+      lock.properties.locked = false;
+      return res(
+        ctx.status(200),
+        ctx.json({
+          ok: true,
+        })
+      );
+    }
+  ),
 ];
 
 const getLockByIdOrThrow404 = (

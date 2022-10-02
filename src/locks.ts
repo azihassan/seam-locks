@@ -24,4 +24,11 @@ export default class LocksClient {
       url: `/locks/${id}/lock`,
     });
   }
+
+  public async unlock(id: string) {
+    return this.axios.perform<OkResponseDTO>({
+      method: "POST",
+      url: `/locks/${id}/unlock`,
+    });
+  }
 }
