@@ -17,3 +17,15 @@ export interface LockListingDTO {
 export interface OkResponseDTO {
   ok: boolean;
 }
+
+export interface AccessCodeDTO {
+  access_code_id: string;
+  lock_id: string;
+  owner_id: string;
+  code: string;
+  name: string;
+}
+
+export interface AccessCodeListingDTO {
+  access_codes: AccessCodeDTO[];
+}
