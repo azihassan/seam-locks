@@ -35,4 +35,11 @@ export const handlers = [
       })
     );
   }),
+
+  rest.get(
+    `https://devicecloud.example.com/locks/${locks[1].lock_id}`,
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(locks[1]));
+    }
+  ),
 ];

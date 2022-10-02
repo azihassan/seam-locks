@@ -46,4 +46,20 @@ describe("Door Locks", () => {
       address: "999 Louis Lane, CA, 94110, United States",
     } as LockDTO);
   });
+
+  test("should get lock by ID", async () => {
+    const http = new AxiosClient(
+      "https://devicecloud.example.com/",
+      "MOCK_ACCESS_TOKEN"
+    );
+    const client = new LocksClient(http);
+    const response = await client.get("1c33d4cf-e178-4c06-8a9a-aadd6dc5a804");
+
+    expect(response).toEqual({
+      lock_id: "1c33d4cf-e178-4c06-8a9a-aadd6dc5a804",
+      name: undefined,
+      model: "example_model",
+      address: "999 Louis Lane, CA, 94110, United States",
+    } as LockDTO);
+  });
 });
