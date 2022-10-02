@@ -72,6 +72,26 @@ describe("Door Locks", () => {
     } as LockDTO);
   });
 
+  test("when getting lock by invalid ID should return 404", async () => {
+    const http = new AxiosClient(
+      "https://devicecloud.example.com/",
+      "MOCK_ACCESS_TOKEN"
+    );
+    const client = new LocksClient(http);
+
+    try {
+      await client.get("921093102");
+      expect(true).toBe(false);
+    } catch (e: unknown) {
+      expect(e).toBeInstanceOf(AxiosError);
+      const error = e as AxiosError;
+      expect(error.response?.status).toBe(404);
+      expect(error.response?.data).toEqual({
+        error: "Lock 921093102 not found",
+      });
+    }
+  });
+
   test("should lock", async () => {
     const http = new AxiosClient(
       "https://devicecloud.example.com/",

@@ -39,9 +39,14 @@ export const handlers = [
   }),
 
   rest.get(`https://devicecloud.example.com/locks/:id`, (req, res, ctx) => {
-    const lock = getLockByIdOrThrow404(req.params.id as string, req, res, ctx);
+    const lock = findLockById(req.params.id as string);
     if (lock === undefined) {
-      return;
+      return res(
+        ctx.status(404),
+        ctx.json({
+          error: `Lock ${req.params.id} not found`,
+        })
+      );
     }
     return res(ctx.status(200), ctx.json(lock));
   }),
@@ -49,14 +54,14 @@ export const handlers = [
   rest.post(
     `https://devicecloud.example.com/locks/:id/lock`,
     (req, res, ctx) => {
-      const lock = getLockByIdOrThrow404(
-        req.params.id as string,
-        req,
-        res,
-        ctx
-      );
+      const lock = findLockById(req.params.id as string);
       if (lock === undefined) {
-        return;
+        return res(
+          ctx.status(404),
+          ctx.json({
+            error: `Lock ${req.params.id} not found`,
+          })
+        );
       }
       lock.properties.locked = true;
       return res(
@@ -71,14 +76,14 @@ export const handlers = [
   rest.post(
     `https://devicecloud.example.com/locks/:id/unlock`,
     (req, res, ctx) => {
-      const lock = getLockByIdOrThrow404(
-        req.params.id as string,
-        req,
-        res,
-        ctx
-      );
+      const lock = findLockById(req.params.id as string);
       if (lock === undefined) {
-        return;
+        return res(
+          ctx.status(404),
+          ctx.json({
+            error: `Lock ${req.params.id} not found`,
+          })
+        );
       }
       lock.properties.locked = false;
       return res(
@@ -91,20 +96,6 @@ export const handlers = [
   ),
 ];
 
-const getLockByIdOrThrow404 = (
-  id: string,
-  req: RestRequest<DefaultBodyType, PathParams<string>>,
-  res: ResponseComposition<DefaultBodyType>,
-  ctx: RestContext
-): LockDTO | undefined => {
-  const lock = locks.find((l) => l.lock_id === id);
-  if (lock === undefined) {
-    res(
-      ctx.status(404),
-      ctx.json({
-        error: `Lock ${req.params.id} not found`,
-      })
-    );
-  }
-  return lock;
+const findLockById = (id: string): LockDTO | undefined => {
+  return locks.find((l) => l.lock_id === id);
 };
