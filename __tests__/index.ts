@@ -72,6 +72,26 @@ describe("Door Locks", () => {
     } as LockDTO);
   });
 
+  test("when getting lock by invalid ID should return 404", async () => {
+    const http = new AxiosClient(
+      "https://devicecloud.example.com/",
+      "MOCK_ACCESS_TOKEN"
+    );
+    const client = new LocksClient(http);
+
+    try {
+      await client.get("921093102");
+      expect(true).toBe(false);
+    } catch (e: unknown) {
+      expect(e).toBeInstanceOf(AxiosError);
+      const error = e as AxiosError;
+      expect(error.response?.status).toBe(404);
+      expect(error.response?.data).toEqual({
+        error: "Lock 921093102 not found",
+      });
+    }
+  });
+
   test("should lock", async () => {
     const http = new AxiosClient(
       "https://devicecloud.example.com/",
@@ -83,5 +103,20 @@ describe("Door Locks", () => {
 
     const lock = await client.get("3043fde0-3c6d-4913-981f-2607f05fe74e");
     expect(lock.properties.locked).toBeTruthy();
+  });
+
+  test("should unlock", async () => {
+    const http = new AxiosClient(
+      "https://devicecloud.example.com/",
+      "MOCK_ACCESS_TOKEN"
+    );
+    const client = new LocksClient(http);
+    const response = await client.unlock(
+      "1c33d4cf-e178-4c06-8a9a-aadd6dc5a804"
+    );
+    expect(response.ok).toBe(true);
+
+    const lock = await client.get("1c33d4cf-e178-4c06-8a9a-aadd6dc5a804");
+    expect(lock.properties.locked).toBeFalsy();
   });
 });
