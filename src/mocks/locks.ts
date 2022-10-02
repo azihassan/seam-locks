@@ -1,11 +1,4 @@
-import {
-  DefaultBodyType,
-  PathParams,
-  ResponseComposition,
-  rest,
-  RestContext,
-  RestRequest,
-} from "msw";
+import { rest } from "msw";
 import { LockDTO } from "../types";
 
 const locks: LockDTO[] = [
@@ -28,7 +21,7 @@ const locks: LockDTO[] = [
   },
 ];
 
-export const handlers = [
+export const lockHandlers = [
   rest.get("https://devicecloud.example.com/locks", (req, res, ctx) => {
     return res(
       ctx.status(200),
