@@ -37,6 +37,9 @@ describe("Door Locks", () => {
       name: "Office Front Door",
       model: "example_model",
       address: "123 Amy Lane, CA, 94110, United States",
+      properties: {
+        locked: false,
+      },
     } as LockDTO);
 
     expect(response.locks[1]).toEqual({
@@ -44,6 +47,9 @@ describe("Door Locks", () => {
       name: undefined,
       model: "example_model",
       address: "999 Louis Lane, CA, 94110, United States",
+      properties: {
+        locked: true,
+      },
     } as LockDTO);
   });
 
@@ -60,6 +66,22 @@ describe("Door Locks", () => {
       name: undefined,
       model: "example_model",
       address: "999 Louis Lane, CA, 94110, United States",
+      properties: {
+        locked: true,
+      },
     } as LockDTO);
+  });
+
+  test("should lock", async () => {
+    const http = new AxiosClient(
+      "https://devicecloud.example.com/",
+      "MOCK_ACCESS_TOKEN"
+    );
+    const client = new LocksClient(http);
+    const response = await client.lock("3043fde0-3c6d-4913-981f-2607f05fe74e");
+    expect(response.ok).toBe(true);
+
+    const lock = await client.get("3043fde0-3c6d-4913-981f-2607f05fe74e");
+    expect(lock.properties.locked).toBeTruthy();
   });
 });

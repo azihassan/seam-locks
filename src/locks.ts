@@ -1,5 +1,5 @@
 import AxiosClient from "./client";
-import { LockDTO, LockListingDTO } from "./types";
+import { LockDTO, LockListingDTO, OkResponseDTO } from "./types";
 
 export default class LocksClient {
   public constructor(private axios: AxiosClient) {}
@@ -15,6 +15,13 @@ export default class LocksClient {
     return this.axios.perform<LockDTO>({
       method: "GET",
       url: `/locks/${id}`,
+    });
+  }
+
+  public async lock(id: string) {
+    return this.axios.perform<OkResponseDTO>({
+      method: "POST",
+      url: `/locks/${id}/lock`,
     });
   }
 }
