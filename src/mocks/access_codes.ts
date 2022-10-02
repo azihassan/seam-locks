@@ -36,4 +36,22 @@ export const accessCodeHandlers = [
       })
     );
   }),
+
+  rest.get(
+    "https://devicecloud.example.com/access_codes/:access_code_id",
+    (req, res, ctx) => {
+      const accessCode = accessCodes.find(
+        (c) => c.access_code_id === req.params.access_code_id
+      );
+      if (accessCode === undefined) {
+        return res(
+          ctx.status(404),
+          ctx.json({
+            error: `Access code ${req.params.access_code_id} was not found`,
+          })
+        );
+      }
+      return res(ctx.status(200), ctx.json(accessCode));
+    }
+  ),
 ];
