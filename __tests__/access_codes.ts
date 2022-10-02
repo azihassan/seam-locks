@@ -68,4 +68,26 @@ describe("Access codes", () => {
       });
     }
   });
+
+  test("should remove access code by id", async () => {
+    const http = new AxiosClient(
+      "https://devicecloud.example.com/",
+      "MOCK_ACCESS_TOKEN"
+    );
+    const client = new AccessCodesClient(http);
+
+    const accessCodeId = "3043fde0-3c6d-4913-981f-2607f05fe743";
+    await client.remove(accessCodeId);
+    try {
+      await client.get(accessCodeId);
+      expect(true).toBe(false);
+    } catch (e: unknown) {
+      expect(e).toBeInstanceOf(AxiosError);
+      const error = e as AxiosError;
+      expect(error.response?.status).toBe(404);
+      expect(error.response?.data).toEqual({
+        error: `Access code ${accessCodeId} was not found`,
+      });
+    }
+  });
 });
