@@ -1,12 +1,11 @@
-import AxiosClient from "../src/client";
+import Seam, { ApiKeyError, NotFoundError } from "../src/client";
 import LocksClient from "../src/locks";
 import { expect, test } from "@jest/globals";
 import { LockDTO } from "../src/types";
-import { AxiosError } from "axios";
 
 describe("Door Locks", () => {
   test("should fail with invalid access token", async () => {
-    const http = new AxiosClient(
+    const http = new Seam(
       "https://devicecloud.example.com/",
       "INVALID_ACCESS_TOKEN"
     );
@@ -15,17 +14,14 @@ describe("Door Locks", () => {
       await client.list();
       expect(true).toBe(false);
     } catch (e: unknown) {
-      expect(e).toBeInstanceOf(AxiosError);
-      const error = e as AxiosError;
-      expect(error.response?.status).toBe(401);
-      expect(error.response?.data).toEqual({
-        error: "Invalid or missing access token",
-      });
+      expect(e).toBeInstanceOf(ApiKeyError);
+      const error = e as ApiKeyError;
+      expect(error.message).toEqual("Invalid or missing access token");
     }
   });
 
   test("should list door locks", async () => {
-    const http = new AxiosClient(
+    const http = new Seam(
       "https://devicecloud.example.com/",
       "MOCK_ACCESS_TOKEN"
     );
@@ -54,7 +50,7 @@ describe("Door Locks", () => {
   });
 
   test("should get lock by ID", async () => {
-    const http = new AxiosClient(
+    const http = new Seam(
       "https://devicecloud.example.com/",
       "MOCK_ACCESS_TOKEN"
     );
@@ -73,7 +69,7 @@ describe("Door Locks", () => {
   });
 
   test("when getting lock by invalid ID should return 404", async () => {
-    const http = new AxiosClient(
+    const http = new Seam(
       "https://devicecloud.example.com/",
       "MOCK_ACCESS_TOKEN"
     );
@@ -83,17 +79,14 @@ describe("Door Locks", () => {
       await client.get("921093102");
       expect(true).toBe(false);
     } catch (e: unknown) {
-      expect(e).toBeInstanceOf(AxiosError);
-      const error = e as AxiosError;
-      expect(error.response?.status).toBe(404);
-      expect(error.response?.data).toEqual({
-        error: "Lock 921093102 not found",
-      });
+      expect(e).toBeInstanceOf(NotFoundError);
+      const error = e as NotFoundError;
+      expect(error.message).toEqual("Lock 921093102 not found");
     }
   });
 
   test("should lock", async () => {
-    const http = new AxiosClient(
+    const http = new Seam(
       "https://devicecloud.example.com/",
       "MOCK_ACCESS_TOKEN"
     );
@@ -106,7 +99,7 @@ describe("Door Locks", () => {
   });
 
   test("should unlock", async () => {
-    const http = new AxiosClient(
+    const http = new Seam(
       "https://devicecloud.example.com/",
       "MOCK_ACCESS_TOKEN"
     );

@@ -1,8 +1,8 @@
-import AxiosClient from "./client";
+import Seam from "./client";
 import { LockDTO, LockListingDTO, OkResponseDTO } from "./types";
 
 export default class LocksClient {
-  public constructor(private axios: AxiosClient) {}
+  public constructor(private axios: Seam) {}
 
   public async list(): Promise<LockListingDTO> {
     return this.axios.perform<LockListingDTO>({

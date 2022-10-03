@@ -1,12 +1,11 @@
-import AxiosClient from "../src/client";
+import Seam, { NotFoundError } from "../src/client";
 import { expect, test } from "@jest/globals";
 import { AccessCodeDTO } from "../src/types";
 import AccessCodesClient from "../src/access_codes";
-import { AxiosError } from "axios";
 
 describe("Access codes", () => {
   test("should list access codes of given lock", async () => {
-    const http = new AxiosClient(
+    const http = new Seam(
       "https://devicecloud.example.com/",
       "MOCK_ACCESS_TOKEN"
     );
@@ -31,7 +30,7 @@ describe("Access codes", () => {
   });
 
   test("should fetch access code by id", async () => {
-    const http = new AxiosClient(
+    const http = new Seam(
       "https://devicecloud.example.com/",
       "MOCK_ACCESS_TOKEN"
     );
@@ -49,7 +48,7 @@ describe("Access codes", () => {
   });
 
   test("given access code does not exist, when fetching by ID, should return 404", async () => {
-    const http = new AxiosClient(
+    const http = new Seam(
       "https://devicecloud.example.com/",
       "MOCK_ACCESS_TOKEN"
     );
@@ -60,17 +59,16 @@ describe("Access codes", () => {
       await client.get(accessCodeId);
       expect(true).toBe(false);
     } catch (e: unknown) {
-      expect(e).toBeInstanceOf(AxiosError);
-      const error = e as AxiosError;
-      expect(error.response?.status).toBe(404);
-      expect(error.response?.data).toEqual({
-        error: `Access code ${accessCodeId} was not found`,
-      });
+      expect(e).toBeInstanceOf(NotFoundError);
+      const error = e as NotFoundError;
+      expect(error.message).toEqual(
+        `Access code ${accessCodeId} was not found`
+      );
     }
   });
 
   test("should remove access code by id", async () => {
-    const http = new AxiosClient(
+    const http = new Seam(
       "https://devicecloud.example.com/",
       "MOCK_ACCESS_TOKEN"
     );
@@ -82,12 +80,7 @@ describe("Access codes", () => {
       await client.get(accessCodeId);
       expect(true).toBe(false);
     } catch (e: unknown) {
-      expect(e).toBeInstanceOf(AxiosError);
-      const error = e as AxiosError;
-      expect(error.response?.status).toBe(404);
-      expect(error.response?.data).toEqual({
-        error: `Access code ${accessCodeId} was not found`,
-      });
+      expect(e).toBeInstanceOf(NotFoundError);
     }
   });
 });
